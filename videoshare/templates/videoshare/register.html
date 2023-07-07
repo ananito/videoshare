@@ -2,7 +2,14 @@
 
 {% block body %}
 <h1>Hello This is a Test</h1>
+{% if message %}
+    {{message}}
 
-
+{% endif %}
+<form action="{% url 'register' %}" method="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" name="submit" value="Register">
+</form>
 
 {% endblock body %}
