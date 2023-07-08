@@ -23,8 +23,11 @@ def register(request):
             user = form.save()
             login(request, user)        
 
-        return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("index"))
 
+        return render(request, "videoshare/register.html", {
+        "form": form,
+        }) 
     else:
         if request.user.is_authenticated:
             logout(request)
@@ -33,36 +36,3 @@ def register(request):
         "form": UserRegistrationForm(),
         }) 
 
-def logout_view(request):
-
-    logout(request)
-    return HttpResponseRedirect(reverse("index"))
-
-
-def login_view(request):
-    if request.method == "POST":
-
-        form = LoginForm(request, data=request.POST)
-
-        if form.is_valid():
-            
-            # Attempt to sign user in
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get("password")
-            user = authenticate(request, username=username, password=password)
-
-            # Check if authentication successful
-            if user is not None:
-                login(request, user)
-                return HttpResponseRedirect(reverse("index"))
-            else:
-                return render(request, "videoshare/login.html")
-    else:
-        # The users shouldnt be logged in
-        if request.user.is_authenticated:
-            logout(request)
-        
-        form = LoginForm()
-        return render(request, "videoshare/login.html", {
-            "form": form
-        })
