@@ -11,5 +11,5 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
     path('login/', auth_views.LoginView.as_view(template_name='videoshare/login.html'), name='login'),
-    path("upload/", login_required(VideoUploadView.as_view()), name="Upload")
+    path("upload/", login_required(VideoUploadView.as_view(), redirect_field_name="login"), name="Upload")
 ]
