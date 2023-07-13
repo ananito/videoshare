@@ -15,7 +15,10 @@ class VideoUpload(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
-    video = models.FileField(upload_to="uploads/videos/", validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
+    video = models.FileField(
+        upload_to="uploads/videos/",
+        validators=[FileExtensionValidator(allowed_extensions=["mp4"])],
+    )
     thumbnail = models.ImageField(upload_to="uploads/images/", blank=True, null=True)
     private = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)

@@ -1,7 +1,6 @@
 import random
 import shutil
 import tempfile
-import threading
 
 import ffmpeg
 from django.http import HttpResponseRedirect, JsonResponse
