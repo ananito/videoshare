@@ -71,22 +71,27 @@ class VideoUploadView(View):
             file_obj.save()
         file_obj.save()
 
-        # Start a new thread to upload the file
-        thread = threading.Thread(target=self.upload_file, args=(file_obj,))
-        thread.start()
-
         return JsonResponse(
             {"status": "success", "message": "File uploaded successfully."}, status=200
         )
+
+    # Checking video type
 
     def is_valid_video_file(self, video):
         # Check if the file has a valid video MIME type
         valid_mime_types = ["video/mp4", "video/mpeg"]
         return video.content_type in valid_mime_types
 
+    # Thumbnail generation at random time
     def generate_thumbnail(self, video):
-        temp = tempfile.mkstemp(suffix=".jpeg")
-        time = random.randint(1, 10)
+        # Get the video duration using ffprobe
+        duration = float(ffmpeg.probe(video)["format"]["duration"])
+
+        # Generate a random time
+        time = random.randint(0, int(duration))
+
+        # Create a temp file for the thumbnail
+        temp = tempfile.mkstemp(suffix=".jpeg", dir="media/uploads/images/")
 
         try:
             # Generate thumbnail using FFmpeg
@@ -99,25 +104,3 @@ class VideoUploadView(View):
             return JsonResponse(
                 {"status": "error", "message": "Thumbnail Generation fail!"}, status=400
             )
-
-    def upload_file(self, file_obj):
-        file_path = file_obj.video.path
-        total_size = file_obj.video.size
-        uploaded_size = 0
-        progress = 0
-
-        with open(file_path, "wb") as destination:
-            for chunk in file_obj.video.chunks():
-                destination.write(chunk)
-                uploaded_size += len(chunk)
-                new_progress = int((uploaded_size / total_size) * 100)
-
-                if new_progress != progress:
-                    progress = new_progress
-                    # Update progress in the database or use a different storage mechanism
-                    file_obj.progress = progress
-                    file_obj.save()
-
-        # Upload completed, set progress to 100
-        file_obj.progress = 100
-        file_obj.save()
