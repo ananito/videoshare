@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+    'django_vite'
 ]
 
 MIDDLEWARE = [
@@ -131,6 +132,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = "index"
 LOGIN_URL = "login"
 
-
+# Media Files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Django Vite
+DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static" / "dist"
+
+DJANGO_VITE_DEV_MODE = DEBUG
+
+STATIC_ROOT = BASE_DIR / "collectedstatic"
+STATICFILES_DIRS = [DJANGO_VITE_ASSETS_PATH]

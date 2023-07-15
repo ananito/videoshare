@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const uploadForm = document.getElementById('upload-form');
 const progressBar = document.getElementById('progress-bar');
 const message = document.querySelector("#upload-alert");
