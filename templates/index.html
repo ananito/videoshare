@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block body %}
+<div class="row">
+    {% for video in videos %}
+    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3 my-3">
+        <div class="card h-100">
+            <a href="" class="link-body-emphasis link-underline link-underline-opacity-0"><img src="{{video.thumbnail.url}}" class="card-img-top img-fluid" alt=""></a>
+            <div class="card-body">
+                <a href="{% url 'watch' %}?v={{video.video_id}}" class="link-body-emphasis link-underline link-underline-opacity-0"><h5 class="card-title">{{video.title}} </h5></a>
+                <hr>
+                <div>
+                    <a href="" class="link-body-emphasis link-underline link-underline-opacity-0"><p>Uploaded by: {{video.user.username}}</p></a>
+                </div>
+                <div>
+                    <p class="text-end">{{ video.date|timesince }}</p>
+                </div>
+            </div>
+        </div>
+        {% comment %} <img class="img-fluid" src="{{video.thumbnail: }}"> {% endcomment %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock body %}
