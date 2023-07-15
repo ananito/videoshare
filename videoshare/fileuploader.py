@@ -1,6 +1,7 @@
 import random
 import shutil
 import tempfile
+import string
 
 import ffmpeg
 from django.http import HttpResponseRedirect, JsonResponse
@@ -42,6 +43,9 @@ class VideoUploadView(View):
         else:
             private = False
 
+        # Generate video_id
+        video_id = self.generate_video_id()
+
         if thumbnail:
             # Thumbnail provided by the user
             file_obj = VideoUpload(
@@ -50,6 +54,7 @@ class VideoUploadView(View):
                 description=description,
                 video=video,
                 private=private,
+                video_id=video_id,
                 thumbnail=thumbnail,
             )
         else:
@@ -59,6 +64,7 @@ class VideoUploadView(View):
                 title=title,
                 description=description,
                 video=video,
+                video_id=video_id,
                 private=private,
             )
             file_obj.save()
@@ -66,7 +72,8 @@ class VideoUploadView(View):
             thumbnail_path = self.generate_thumbnail(file_obj.video.path)[1]
             destination = f"media/uploads/images/{file_obj.unique_id}.jpeg"
             shutil.move(thumbnail_path, destination)
-            file_obj.thumbnail = destination
+            destination = f"uploads/images/{file_obj.unique_id}.jpeg"
+            file_obj.thumbnail.name = destination
             file_obj.save()
         file_obj.save()
 
@@ -74,8 +81,18 @@ class VideoUploadView(View):
             {"status": "success", "message": "File uploaded successfully."}, status=200
         )
 
-    # Checking video type
+    # Generate video id of length 8
+    def generate_video_id(self):
+        letters = string.ascii_letters + string.digits + "_-"
+        video_id = "".join(random.SystemRandom().choice(letters) for i in range(8))
 
+        exists = VideoUpload.objects.filter(video_id=video_id).exists()
+
+        if exists:
+            return self.generate_video_id()
+        return video_id
+
+    # Checking video type
     def is_valid_video_file(self, video):
         # Check if the file has a valid video MIME type
         valid_mime_types = ["video/mp4", "video/mpeg"]

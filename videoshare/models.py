@@ -2,7 +2,6 @@ from django.db import models
 import uuid
 
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import FileExtensionValidator
 
 
 # Create your models here.
@@ -15,10 +14,8 @@ class VideoUpload(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
-    video = models.FileField(
-        upload_to="uploads/videos/",
-        validators=[FileExtensionValidator(allowed_extensions=["mp4"])],
-    )
+    video = models.FileField(upload_to="uploads/videos/")
     thumbnail = models.ImageField(upload_to="uploads/images/", blank=True, null=True)
     private = models.BooleanField(default=False)
+    video_id = models.CharField(max_length=120, blank=False)
     date = models.DateTimeField(auto_now_add=True)
