@@ -1,12 +1,15 @@
+import json
+import uuid
+
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
-from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.db.models.functions import Random
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
 from .forms import UserRegistrationForm
-
-from .models import VideoUpload
+from .models import VideoUpload, Like
 
 # Create your views here.
 
@@ -14,14 +17,11 @@ from .models import VideoUpload
 def index(request):
     videos = VideoUpload.objects.filter(private=False).order_by(Random())[:30]
 
-    return render(request, "index.html", {
-        "videos": videos
-    })
+    return render(request, "index.html", {"videos": videos})
 
 
 def register(request):
     if request.method == "POST":
-
         # Send Request data to the form
         form = UserRegistrationForm(request.POST)
 
@@ -31,16 +31,24 @@ def register(request):
 
             return HttpResponseRedirect(reverse("index"))
 
-        return render(request, "register.html", {
-            "form": form,
-        })
+        return render(
+            request,
+            "register.html",
+            {
+                "form": form,
+            },
+        )
     else:
         if request.user.is_authenticated:
             logout(request)
 
-        return render(request, "register.html", {
-            "form": UserRegistrationForm(),
-        })
+        return render(
+            request,
+            "register.html",
+            {
+                "form": UserRegistrationForm(),
+            },
+        )
 
 
 def watch_view(request):
@@ -50,15 +58,71 @@ def watch_view(request):
 
     if len(video_id) != 8:
         raise Http404("Page does not exist")
-    
+
     try:
         video = VideoUpload.objects.get(video_id=video_id)
     except VideoUpload.DoesNotExist:
         raise Http404("Page does not exist")
-    
-    recommends = VideoUpload.objects.filter(private=False).order_by(Random())[:25]
 
-    return render(request, "watch.html", {
-        "video": video,
-        "recommends": recommends
-    })
+    likes_dislikes = Like.objects.get_or_create(video=video)[0]
+
+    recommends = (
+        VideoUpload.objects.filter(private=False)
+        .order_by(Random())
+        .exclude(video_id=video_id)[:25]
+    )
+
+    return render(
+        request,
+        "watch.html",
+        {"video": video, "recommends": recommends, "likes": likes_dislikes},
+    )
+
+
+@login_required(redirect_field_name="login")
+def like_dislike(request, action):
+    if request.method != "POST":
+        return JsonResponse({"message": "POST request required"}, status=400)
+
+    data = json.loads(request.body)
+    unique_id = data.get("unique_id")
+    video_id = data.get("video_id")
+    username = request.user.username
+
+    try:
+        uuid.UUID(str(unique_id))
+    except ValueError:
+        return JsonResponse({"message": "Invalid unique_id "}, status=400)
+
+    try:
+        video = VideoUpload.objects.get(unique_id=unique_id, video_id=video_id)
+    except VideoUpload.DoesNotExist:
+        return JsonResponse({"message": "Invalid video id or unique_id "}, status=400)
+
+    try:
+        like_dislike = Like.objects.get(video=video)
+    except Like.DoesNotExist:
+        return JsonResponse({"message": "error "}, status=400)
+
+    if action == "like":
+        if like_dislike.liked_by.filter(username=username).exists():
+            like_dislike.liked_by.remove(request.user)
+            like_dislike.save()
+        else:
+            like_dislike.liked_by.add(request.user)
+            like_dislike.disliked_by.remove(request.user)
+            like_dislike.save()
+    elif action == "dislike":
+        if like_dislike.disliked_by.filter(username=username).exists():
+            like_dislike.disliked_by.remove(request.user)
+            like_dislike.save()
+        else:
+            like_dislike.disliked_by.add(request.user)
+            like_dislike.liked_by.remove(request.user)
+            like_dislike.save()
+    else:
+        return Http404("Url Does not exists!")
+    return JsonResponse({"message": {
+        "like": like_dislike.liked_by.count(),
+        "dislike": like_dislike.disliked_by.count()
+    }}, status=200)

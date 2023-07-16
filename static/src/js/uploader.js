@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getCookie } from './getCookie';
 
 const uploadForm = document.getElementById('upload-form');
 const progressBar = document.getElementById('progress-bar');
@@ -34,8 +35,3 @@ uploadForm.addEventListener('submit', (e) => {
     });
 });
 
-// Helper function to get the CSRF token from the cookie
-function getCookie(name) {
-    const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-    return cookieValue ? cookieValue.pop() : '';
-}

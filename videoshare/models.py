@@ -19,3 +19,13 @@ class VideoUpload(models.Model):
     private = models.BooleanField(default=False)
     video_id = models.CharField(max_length=120, blank=False)
     date = models.DateTimeField(auto_now_add=True)
+
+
+class Like(models.Model):
+    video = models.ForeignKey(VideoUpload, on_delete=models.CASCADE)
+    liked_by = models.ManyToManyField(User, related_name="video_likes", blank=True)
+    disliked_by = models.ManyToManyField(User, related_name="video_dislikes", blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.video.title

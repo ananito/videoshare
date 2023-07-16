@@ -19,12 +19,11 @@
                     <!-- Owner Button and info -->
                     <div id="owner">
                         <p class="text d-inline me-2">uploaded by: {{video.user.username}}</p>
-                        <button type="button" class="btn btn-outline-primary">Follow</button>
+                        <button type="button" id="follow_btn" class="btn btn-outline-primary">Follow</button>
                     </div>
                     <div class="d-flex justify-content-end">
-                        <button type="button" id="like_btn" class="btn btn btn-outline-secondary me-2">Like</button>
-                        <button type="button" id="dislike_btn" class="btn btn btn-outline-secondary">Dislike</button>
-
+                        <button type="button" id="like_btn" data-unique-id="{{ video.unique_id }}" class="btn btn btn-outline-secondary me-2">Like <span id="like_count">{{likes.liked_by.count}}</span></button>
+                        <button type="button" id="dislike_btn" data-unique-id="{{ video.unique_id }}" class="btn btn btn-outline-secondary">Dislike <span id="dislike_count">{{ likes.disliked_by.count }} </span></button>
                     </div>
                     <div>
                         <div class="row">
