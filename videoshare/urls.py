@@ -13,5 +13,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path("upload/", login_required(VideoUploadView.as_view(), redirect_field_name="login"), name="Upload"),
     path("watch", views.watch_view, name="watch"),
-    path("like_dislike/<str:action>", views.like_dislike, name="like_unlike")
+    path("like_dislike/<str:action>", views.like_dislike, name="like_unlike"),
+    path("update_views/<str:video_id>", views.update_views, name=""),
+    path("random_video/", views.random_video, name="random_video")
 ]

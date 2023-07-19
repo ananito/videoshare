@@ -1,15 +1,20 @@
 import json
+import random
 import uuid
+# from datetime import datetime, timedelta
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.db.models import F
 from django.db.models.functions import Random
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import render
 from django.urls import reverse
+# from django.utils import timezone
 
 from .forms import UserRegistrationForm
-from .models import VideoUpload, Like
+from .models import Like, UserViewHistory, VideoUpload
 
 # Create your views here.
 
@@ -126,3 +131,47 @@ def like_dislike(request, action):
         "like": like_dislike.liked_by.count(),
         "dislike": like_dislike.disliked_by.count()
     }}, status=200)
+
+
+def update_views(request, video_id):
+    if request.method != "POST":
+        return JsonResponse({"message": "POST request required"}, status=400)
+
+    data = json.loads(request.body)
+
+    if data.get("video_id") != str(video_id):
+        return JsonResponse({"message": "video id did not match"}, status=400)
+
+    try:
+        video = VideoUpload.objects.get(video_id=data.get("video_id"))
+    except VideoUpload.DoesNotExist:
+        return JsonResponse({"message": "invalid video id"}, status=400)
+
+    if request.user.is_authenticated:
+        try:
+            userhistory = UserViewHistory.objects.get(user=request.user)
+            userhistory.videos.add(video)
+            video.views += 1
+            video.save()
+            userhistory.save()
+        except UserViewHistory.DoesNotExist:
+            userhistory = UserViewHistory.objects.create(user=request.user)
+            video.views += 1
+            video.save()
+    elif not request.user.is_authenticated:
+        video.views += 1
+        video.save()
+
+
+    return JsonResponse({"message": "success"}, status=200)
+
+
+def random_video(self):
+    video_count = VideoUpload.objects.filter(private=False).order_by(Random())[:50]
+    rand_num = random.randint(0, (video_count.count()-1))
+    video = video_count[rand_num]
+    return HttpResponseRedirect(reverse("watch") + f"?v={video.video_id}")
+    # return HttpResponse(f"{random.randint(0, video_count-1)}")
+
+def most_viewed_video(request):
+    pass

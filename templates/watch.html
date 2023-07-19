@@ -28,10 +28,10 @@
                     <div>
                         <div class="row">
                             <div class="col-6">
-                                adfsd
+                                {{video.views}} Views
                             </div>
                             <div class="col-6 d-flex justify-content-end">
-                                uploaded: {{video.date|timesince}}
+                                uploaded: {{video.date|timesince}} ago
                             </div>
                         </div>
                         <div class="accordion" id="description-accordion">
@@ -75,7 +75,8 @@
                                 </a>
                             </div>
                             <div>
-                                <p class="text-end">{{ recommend_video.date|timesince }}</p>
+                                <p class="text-start">{{recommend_video.views}} Views</p>
+                                <p class="text-end">{{ recommend_video.date|timesince }} ago</p>
                             </div>
                         </div>
                     </div>

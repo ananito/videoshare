@@ -12,7 +12,8 @@
                     <a href="" class="link-body-emphasis link-underline link-underline-opacity-0"><p>Uploaded by: {{video.user.username}}</p></a>
                 </div>
                 <div>
-                    <p class="text-end">{{ video.date|timesince }}</p>
+                    <p class="text-start">{{video.views}} Views</p>
+                    <p class="text-end">{{ video.date|timesince }} ago</p>
                 </div>
             </div>
         </div>
