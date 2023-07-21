@@ -173,5 +173,8 @@ def random_video(self):
     return HttpResponseRedirect(reverse("watch") + f"?v={video.video_id}")
     # return HttpResponse(f"{random.randint(0, video_count-1)}")
 
-def most_viewed_video(request):
-    pass
+def most_viewed_videos(request):
+    videos = VideoUpload.objects.all().order_by("-views")
+    return render(request, "most_viewed_videos.html", {
+        "videos": videos
+    })

@@ -61,7 +61,7 @@
             {% for recommend_video in recommends %}
                 <div class="col-sm-12 col-md-4 col-lg-10 mb-3">
                     <div class="card h-100">
-                        <a href="" class="link-body-emphasis link-underline link-underline-opacity-0"><img
+                        <a href="{% url 'watch' %}?v={{recommend_video.video_id}}" class="link-body-emphasis link-underline link-underline-opacity-0"><img
                                 src="{{recommend_video.thumbnail.url}}" class="card-img-top img-fluid" alt=""></a>
                         <div class="card-body">
                             <a href="{% url 'watch' %}?v={{recommend_video.video_id}}"
@@ -74,7 +74,7 @@
                                     <p>Uploaded by: {{recommend_video.user.username}}</p>
                                 </a>
                             </div>
-                            <div>
+                            <div class="d-flex justify-content-between">
                                 <p class="text-start">{{recommend_video.views}} Views</p>
                                 <p class="text-end">{{ recommend_video.date|timesince }} ago</p>
                             </div>
