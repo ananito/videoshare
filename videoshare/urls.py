@@ -16,5 +16,6 @@ urlpatterns = [
     path("like_dislike/<str:action>", views.like_dislike, name="like_unlike"),
     path("update_views/<str:video_id>", views.update_views, name=""),
     path("random_video/", views.random_video, name="random_video"),
-    path("most_viewed/", views.most_viewed_videos, name="most_viewed")
+    path("most_viewed/", views.most_viewed_videos, name="most_viewed"),
+    path("new_comment/", views.new_comment, name="new_comment")
 ]

@@ -5,7 +5,6 @@ import uuid
 
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import F
 from django.db.models.functions import Random
 from django.http import (Http404, HttpResponse, HttpResponseRedirect,
                          JsonResponse)
@@ -14,7 +13,7 @@ from django.urls import reverse
 # from django.utils import timezone
 
 from .forms import UserRegistrationForm
-from .models import Like, UserViewHistory, VideoUpload
+from .models import Like, UserViewHistory, VideoUpload, Comment
 
 # Create your views here.
 
@@ -162,7 +161,6 @@ def update_views(request, video_id):
         video.views += 1
         video.save()
 
-
     return JsonResponse({"message": "success"}, status=200)
 
 
@@ -173,8 +171,29 @@ def random_video(self):
     return HttpResponseRedirect(reverse("watch") + f"?v={video.video_id}")
     # return HttpResponse(f"{random.randint(0, video_count-1)}")
 
+
 def most_viewed_videos(request):
     videos = VideoUpload.objects.all().order_by("-views")
     return render(request, "most_viewed_videos.html", {
         "videos": videos
     })
+
+
+@login_required(redirect_field_name="login")
+def new_comment(request):
+    if request.method != "POST":
+        return JsonResponse({"message": "POST request required"}, status=400)
+
+    data = json.loads(request.body)
+
+    try:
+        video = VideoUpload.objects.get(video_id=data.get("video_id"))
+    except VideoUpload.DoesNotExist:
+        return JsonResponse({"message": "invalid video id"}, status=400)
+
+    try:
+        comment = Comment.objects.create(user=request.user, video=video, comment=data.get("commentBody"))
+    except Comment.IntegrityError:
+        return JsonResponse({"error": "Something went wrong"}, status=400)
+
+    return JsonResponse({"message": "success"})
