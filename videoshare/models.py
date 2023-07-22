@@ -46,3 +46,18 @@ class UserViewHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.username}"
+
+
+class Comment(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField(blank=False)
+    video = models.ForeignKey(VideoUpload, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")
+
+    def __str__(self):
+        return self.user.username
