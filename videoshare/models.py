@@ -53,6 +53,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(blank=False)
     video = models.ForeignKey(VideoUpload, on_delete=models.CASCADE)
+    likes = models.IntegerField(blank=False, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -61,3 +62,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class CommentLike(models.Model):
+
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    user = models.ManyToManyField("User")
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("CommentLike")
+        verbose_name_plural = _("CommentLikes")
+
+    def __str__(self):
+        return self.comment
