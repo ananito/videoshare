@@ -1,19 +1,20 @@
 import json
 import random
 import uuid
+
 # from datetime import datetime, timedelta
 
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models.functions import Random
-from django.http import (Http404, HttpResponse, HttpResponseRedirect,
-                         JsonResponse)
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+
 # from django.utils import timezone
 
 from .forms import UserRegistrationForm
-from .models import Like, UserViewHistory, VideoUpload, Comment
+from .models import Like, UserViewHistory, VideoUpload, Comment, CommentLike
 
 # Create your views here.
 
@@ -76,10 +77,18 @@ def watch_view(request):
         .exclude(video_id=video_id)[:25]
     )
 
+    comments = Comment.objects.filter(video=video).order_by("-likes", "-created_at")
+    
+
     return render(
         request,
         "watch.html",
-        {"video": video, "recommends": recommends, "likes": likes_dislikes},
+        {
+            "video": video,
+            "recommends": recommends,
+            "likes": likes_dislikes,
+            "comments": comments,
+        },
     )
 
 
@@ -126,10 +135,15 @@ def like_dislike(request, action):
             like_dislike.save()
     else:
         return Http404("Url Does not exists!")
-    return JsonResponse({"message": {
-        "like": like_dislike.liked_by.count(),
-        "dislike": like_dislike.disliked_by.count()
-    }}, status=200)
+    return JsonResponse(
+        {
+            "message": {
+                "like": like_dislike.liked_by.count(),
+                "dislike": like_dislike.disliked_by.count(),
+            }
+        },
+        status=200,
+    )
 
 
 def update_views(request, video_id):
@@ -166,7 +180,7 @@ def update_views(request, video_id):
 
 def random_video(self):
     video_count = VideoUpload.objects.filter(private=False).order_by(Random())[:50]
-    rand_num = random.randint(0, (video_count.count()-1))
+    rand_num = random.randint(0, (video_count.count() - 1))
     video = video_count[rand_num]
     return HttpResponseRedirect(reverse("watch") + f"?v={video.video_id}")
     # return HttpResponse(f"{random.randint(0, video_count-1)}")
@@ -174,26 +188,90 @@ def random_video(self):
 
 def most_viewed_videos(request):
     videos = VideoUpload.objects.all().order_by("-views")
-    return render(request, "most_viewed_videos.html", {
-        "videos": videos
-    })
+    return render(request, "most_viewed_videos.html", {"videos": videos})
 
 
-@login_required(redirect_field_name="login")
 def new_comment(request):
     if request.method != "POST":
         return JsonResponse({"message": "POST request required"}, status=400)
 
     data = json.loads(request.body)
 
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User Should be signed in"}, status=400)
+
     try:
         video = VideoUpload.objects.get(video_id=data.get("video_id"))
     except VideoUpload.DoesNotExist:
         return JsonResponse({"message": "invalid video id"}, status=400)
 
+    if data.get("commentBody") == "":
+        return JsonResponse({"error": "please insert a text"}, status=400)
+
+    if str(data.get("commentBody")).isspace():
+        return JsonResponse({"error": "please insert a text"}, status=400)
+
     try:
-        comment = Comment.objects.create(user=request.user, video=video, comment=data.get("commentBody"))
+        comment = Comment.objects.create(
+            user=request.user, video=video, comment=data.get("commentBody")
+        )
     except Comment.IntegrityError:
         return JsonResponse({"error": "Something went wrong"}, status=400)
 
-    return JsonResponse({"message": "success"})
+    return JsonResponse(
+        {
+            "message": "success",
+            "data": {
+                "id": comment.id,
+                "username": comment.user.username,
+                "body": comment.comment,
+                "likes": comment.likes,
+                "created_at": comment.created_at,
+            },
+        },
+        status=200,
+    )
+
+
+@login_required(redirect_field_name="login")
+def CommentLikes(request):
+    if request.method != "POST":
+        return JsonResponse({"message": "POST request required"}, status=400)
+
+    data = json.loads(request.body)
+
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User Should be signed in"}, status=400)
+
+    try:
+        VideoUpload.objects.get(video_id=data.get("video_id"))
+    except VideoUpload.DoesNotExist:
+        return JsonResponse({"message": "invalid video id"}, status=400)
+
+    try:
+        comment = Comment.objects.get(pk=data.get("comment_id"))
+    except Comment.DoesNotExist:
+        return JsonResponse({"message": "invalid comment id"}, status=400)
+
+    try:
+        comment_like = CommentLike.objects.get(comment=comment)
+        if request.user in comment_like.user.all():
+            comment_like.user.remove(request.user)
+            comment_like.save()
+            comment.likes -= 1
+            comment.save()
+        else:
+            comment_like.user.add(request.user)
+            comment_like.save()
+            comment.likes += 1
+            comment.save()
+    except CommentLike .DoesNotExist:
+        comment_like = CommentLike.objects.create(comment=comment)
+        comment_like.user.add(request.user)
+        comment_like.save()
+        comment.likes += 1
+        comment.save()
+
+    return JsonResponse({"message": "success", "data": {
+        "total": comment_like.user.count()
+    }}, status=200)

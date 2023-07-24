@@ -61,13 +61,13 @@ class Comment(models.Model):
         verbose_name_plural = _("Comments")
 
     def __str__(self):
-        return self.user.username
+        return self.comment
 
 
 class CommentLike(models.Model):
 
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    user = models.ManyToManyField("User")
+    user = models.ManyToManyField(User, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -75,4 +75,4 @@ class CommentLike(models.Model):
         verbose_name_plural = _("CommentLikes")
 
     def __str__(self):
-        return self.comment
+        return self.comment.comment

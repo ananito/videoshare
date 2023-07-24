@@ -56,9 +56,13 @@
                 <div class="col-sm-12 col-md-12 col-lg-10 mb-3">
                    <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Comments <span>0</span></h6>
+                        <h6 class="card-title">Comments <span>{{comments.count}}</span></h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="comment">
+                        <div class="alert alert-warning alert-dismissible fade show d-none" id="comment-error" role="alert">
+                            <p class="alert-message"></p>
+                            <button type="button" class="btn-close" aria-label="Close"></button>
+                        </div>
                         <p class="card-title small">New comment</p>
                         <form method="post" id="commentForm">
                             <div class="mb-3">
@@ -67,21 +71,26 @@
                             <button class="btn btn-primary">Comment</button>
                         </form>
                     </div>
-                    <div class="card-body border-top">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="card-title"><a class="link link-underline  link-underline-opacity-0" href=""> padsfasdf</a></h5>
+                    <div class="comment-lists">
+
+                        {% for comment in comments %}
+                        <div class="card-body border-top">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title"><a class="link link-underline  link-underline-opacity-0" href="" data-id="{{comment.id}}"> {{comment.user.username}}</a></h5>
+                                </div>
+                            </div>
+                            <!-- Comment Date -->
+                            <p class="small">{{comment.created_at }}</p>
+                            <!-- Comment Content -->
+                            <p id="comment-body">{{comment.comment}} </p>
+
+                            <!-- Like count -->
+                            <div class="d-flex commentlikes" data-id="{{comment.id}}">
+                                Likes <span class="ms-1">{{comment.likes}}</span>
                             </div>
                         </div>
-                        <!-- Comment Date -->
-                        <p class="small">post.date }}</p>
-                        <!-- Comment Content -->
-                        <p id="comment-body">post.text }} </p>
-
-                        <!-- Like count -->
-                        <div class="d-flex">
-                            Like 
-                        </div>
+                        {% endfor %}
                     </div>
                    </div>
                 </div>

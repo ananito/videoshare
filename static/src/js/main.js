@@ -4,6 +4,7 @@ import "../js/like.js"
 
 import "./uploader.js";
 import "./UserWatched.js";
-import "./newComment"
+import "./newComment";
+import "./commentLike";
 
 import videojs from 'video.js';
