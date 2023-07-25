@@ -78,7 +78,6 @@ def watch_view(request):
     )
 
     comments = Comment.objects.filter(video=video).order_by("-likes", "-created_at")
-    
 
     return render(
         request,
@@ -233,7 +232,6 @@ def new_comment(request):
     )
 
 
-@login_required(redirect_field_name="login")
 def CommentLikes(request):
     if request.method != "POST":
         return JsonResponse({"message": "POST request required"}, status=400)
@@ -265,13 +263,23 @@ def CommentLikes(request):
             comment_like.save()
             comment.likes += 1
             comment.save()
-    except CommentLike .DoesNotExist:
+    except CommentLike.DoesNotExist:
         comment_like = CommentLike.objects.create(comment=comment)
         comment_like.user.add(request.user)
         comment_like.save()
         comment.likes += 1
         comment.save()
 
-    return JsonResponse({"message": "success", "data": {
-        "total": comment_like.user.count()
-    }}, status=200)
+    return JsonResponse(
+        {"message": "success", "data": {"total": comment_like.user.count()}}, status=200
+    )
+
+
+@login_required(redirect_field_name="login")
+def history_view(request):
+    try:
+        history = UserViewHistory.objects.get(user=request.user)
+    except UserViewHistory.DoesNotExist:
+        return render(request, "history.html", {"histories": False})
+
+    return render(request, "history.html", {"histories": history.videos.order_by("-date")})

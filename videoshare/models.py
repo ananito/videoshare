@@ -39,6 +39,7 @@ class Like(models.Model):
 class UserViewHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     videos = models.ManyToManyField(VideoUpload, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = _("UserViewHistory")

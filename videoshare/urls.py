@@ -18,5 +18,7 @@ urlpatterns = [
     path("random_video/", views.random_video, name="random_video"),
     path("most_viewed/", views.most_viewed_videos, name="most_viewed"),
     path("new_comment/", views.new_comment, name="new_comment"),
-    path("like_comment/", views.CommentLikes, name="comment_likes")
+    path("like_comment/", views.CommentLikes, name="comment_likes"),
+    path("history/", views.history_view, name="history_view"),
+
 ]

@@ -31,6 +31,5 @@ like_btns.forEach(btn => {
         .catch((error) => {
             console.log(error);
         })
-        console.log(btn.dataset.id);
     });
 });
