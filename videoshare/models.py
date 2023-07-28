@@ -1,7 +1,7 @@
-from django.db import models
 import uuid
 
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
@@ -29,7 +29,9 @@ class VideoUpload(models.Model):
 class Like(models.Model):
     video = models.ForeignKey(VideoUpload, on_delete=models.CASCADE)
     liked_by = models.ManyToManyField(User, related_name="video_likes", blank=True)
-    disliked_by = models.ManyToManyField(User, related_name="video_dislikes", blank=True)
+    disliked_by = models.ManyToManyField(
+        User, related_name="video_dislikes", blank=True
+    )
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -50,7 +52,6 @@ class UserViewHistory(models.Model):
 
 
 class Comment(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(blank=False)
     video = models.ForeignKey(VideoUpload, on_delete=models.CASCADE)
@@ -66,7 +67,6 @@ class Comment(models.Model):
 
 
 class CommentLike(models.Model):
-
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
     user = models.ManyToManyField(User, blank=True)
     date = models.DateTimeField(auto_now_add=True)

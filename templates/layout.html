@@ -39,8 +39,8 @@
                         </ul>
                     </div>
                     <div class=" col-md-6 justify-content-lg-center">
-                        <form class="d-flex w-100 ms-auto me-auto" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <form class="d-flex w-100 ms-auto me-auto" method="get" action="{% url 'search_view' %}" role="search">
+                            <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </form>
                     </div>
@@ -57,8 +57,7 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="{% url 'history_view' %}">History</a></li>
-                                        <li><a class="dropdown-item" href="#">Your Videos</a></li>
-                                        <li><a href="#" class="dropdown-item">Settings</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'my_videos' %}">Your Videos</a></li>
                                     </ul>
                                 </li>
                                 <li class="nav-item me-auto">

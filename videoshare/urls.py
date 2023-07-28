@@ -2,6 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from .fileuploader import VideoUploadView
+from .MyVideos import MyVideos
 
 from . import views
 
@@ -19,6 +20,9 @@ urlpatterns = [
     path("most_viewed/", views.most_viewed_videos, name="most_viewed"),
     path("new_comment/", views.new_comment, name="new_comment"),
     path("like_comment/", views.CommentLikes, name="comment_likes"),
-    path("history/", views.history_view, name="history_view"),
-
+    path("user/history/", views.history_view, name="history_view"),
+    path("user/videos/", MyVideos.as_view(),  name="my_videos"),
+    path("delete/<str:video_id>", MyVideos.as_view(),  name="my_videos"),
+    path("getvideoinfo/<str:video_id>", views.getVideoInfo, name="getVideoInfor"),
+    path("search", views.search_view, name="search_view")
 ]

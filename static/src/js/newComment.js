@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getCookie } from "./getCookie";
+if (window.location.pathname === "/watch") {
 
 const CommentForm = document.querySelector("#commentForm");
 const csrftoken = getCookie("csrftoken");
@@ -61,3 +62,4 @@ CommentForm.addEventListener("submit", (e) => {
         }
     });
 });
+}

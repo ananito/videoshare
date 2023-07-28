@@ -4,10 +4,9 @@ import axios from 'axios';
 import { getCookie } from './getCookie';
 
 
-
-
-const player = videojs("my-video")
 const video_id = window.location.search.replace("?v=", "");
+if (window.location.pathname === "/watch") {
+    const player = videojs("my-video")
 
 // when i use player.off() the video player icon does not work
 let tries = 0;
@@ -30,3 +29,5 @@ player.on("play", () => {
     tries = 1;
 
 });
+}
+

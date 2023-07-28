@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<div class="row">
+    {% for video in videos %}
+    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3 my-3 video-container">
+        <div class="card h-100">
+            <a href="{% url 'watch' %}?v={{video.video_id}}" class="link-body-emphasis link-underline link-underline-opacity-0" id="watchurl"><img src="{{video.thumbnail.url}}" class="card-img-top img-fluid" alt=""></a>
+            <div class="card-body">
+                <a href="{% url 'watch' %}?v={{video.video_id}}" class="link-body-emphasis link-underline link-underline-opacity-0"><h5 class="card-title">{{video.title}} </h5></a>
+                <hr>
+                <div>
+                    <a href="" class="link-body-emphasis link-underline link-underline-opacity-0"><p>Uploaded by: {{video.user.username}}</p></a>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <p class="text-start">{{video.views}} Views</p>
+                    <p class="text-end">{{ video.date|timesince }} ago</p>
+                </div>
+                <div class="d-flex justify-content-between">
+                    {% if video.private == False%}
+                        <p class="text-success fs-6">Public</p> 
+                    {% else %}
+                        <p class="text-danger fs-6 ">Private</p>
+                    {% endif %}
+                        <button type="submit" id="myVideoEdit" class="btn btn-primary">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="modal editModal" id="editModal">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="uploadModalLabel">Upload</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body w-100 ">
+                <div class="alert alert-dismissible fade show d-none" id="edit-alert" role="alert">
+                    <p class="" id="editMessage"></p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <form  method="post" id="editform" enctype="multipart/form-data">
+
+
+                    <div class="mb-3">
+                        <input type="text" name="videoTitle" id="title" class="form-control" placeholder="Title">
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="videoDescription" class="form-control" id="videoDescription" cols="30" rows="4" placeholder="Description"></textarea>
+
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="videoPrivate" value="True" id="private">
+                        <label for="public" class="form-check-label" >Private</label>
+
+                    </div>
+                    <div class="d-flex justify-content-between">
+
+                        <button type="submit" name="update" class="btn btn-primary">Update</button>
+                        <button type="submit" name="delete" class="btn btn-danger">Delete Video</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock body %}

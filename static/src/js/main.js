@@ -6,5 +6,5 @@ import "./uploader.js";
 import "./UserWatched.js";
 import "./newComment";
 import "./commentLike";
-
+import "./myVideoEdit";
 import videojs from 'video.js';

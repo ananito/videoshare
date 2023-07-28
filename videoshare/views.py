@@ -2,19 +2,21 @@ import json
 import random
 import uuid
 
-# from datetime import datetime, timedelta
-
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+# from datetime import datetime, timedelta
+from django.core import serializers
 from django.db.models.functions import Random
-from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import render
 from django.urls import reverse
 
+from .forms import UserRegistrationForm
+from .models import Comment, CommentLike, Like, UserViewHistory, VideoUpload
+
 # from django.utils import timezone
 
-from .forms import UserRegistrationForm
-from .models import Like, UserViewHistory, VideoUpload, Comment, CommentLike
 
 # Create your views here.
 
@@ -282,4 +284,26 @@ def history_view(request):
     except UserViewHistory.DoesNotExist:
         return render(request, "history.html", {"histories": False})
 
-    return render(request, "history.html", {"histories": history.videos.order_by("-date")})
+    return render(
+        request, "history.html", {"histories": history.videos.order_by("-date")}
+    )
+
+
+@login_required(redirect_field_name="login")
+def getVideoInfo(request, video_id):
+    if request.method != "GET":
+        return JsonResponse({"message": "GET request required"}, status=400)
+
+    video = VideoUpload.objects.filter(video_id=video_id)
+    if not video.exists():
+        return JsonResponse({"message": "invalid video id"}, status=400)
+
+    obj = serializers.serialize("json", video)
+    return HttpResponse(obj, content_type="application/json")
+
+
+def search_view(request):
+
+    query = request.GET.get("q")
+    videos = VideoUpload.objects.filter(title__contains=query, private=False).order_by("-views", "-date")
+    return render(request, "search.html", {"query": query, "videos": videos})
