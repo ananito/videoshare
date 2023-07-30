@@ -19,7 +19,6 @@
                     <!-- Owner Button and info -->
                     <div id="owner">
                         <p class="text d-inline me-2">uploaded by: {{video.user.username}}</p>
-                        <button type="button" id="follow_btn" class="btn btn-outline-primary">Follow</button>
                     </div>
                     <div class="d-flex justify-content-end">
                         <button type="button" id="like_btn" data-unique-id="{{ video.unique_id }}" class="btn btn btn-outline-secondary me-2">Like <span id="like_count">{{likes.liked_by.count}}</span></button>
@@ -111,7 +110,7 @@
                             </a>
                             <hr>
                             <div>
-                                <a href="" class="link-body-emphasis link-underline link-underline-opacity-0">
+                                <a href="{% url 'watch' %}?v={{recommend_video.video_id}}" class="link-body-emphasis link-underline link-underline-opacity-0">
                                     <p>Uploaded by: {{recommend_video.user.username}}</p>
                                 </a>
                             </div>
