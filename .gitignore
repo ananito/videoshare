@@ -16,7 +16,6 @@ media
 # Distribution / packaging 
 .Python build/ 
 develop-eggs/ 
-!dist/ 
 downloads/ 
 eggs/ 
 .eggs/ 
@@ -85,7 +84,6 @@ venv.bak/
 .tox/
 __pycache__
 MANIFEST
-dist/
 docs/_build/
 docs/locale/
 node_modules/
@@ -93,3 +91,4 @@ tests/coverage_html/
 tests/.coverage*
 build/
 tests/report/
+!dist/
