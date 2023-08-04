@@ -94,8 +94,8 @@ Install nodejs and python
 git clone https://github.com/me50/ananito/blob/web50/projects/2020/x/capstone.git
 cd capstone
 pip install -r requirements.txt
-mkdir media media/uploads/ media/uploads/images media/uploads/videos
-npm -i 
+mkdir media media/uploads/ media/uploads/images media/uploads/videos static/dist
+npm install
 npx vite
 python manage.py makemigrations
 python manage.py runserver
