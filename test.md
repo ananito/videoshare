@@ -6,9 +6,6 @@
 - [Distinctiveness and Complexity](#distinctiveness-and-complexity)
 - [Files and Directory Structure](#files-and-directory-structure)
 - [Installation and Usage](#installation-and-usage)
-- [Additional Information](#additional-information)
-- [Python Packages](#python-packages)
-- [License](#license)
 
 ## Description
 
@@ -28,7 +25,7 @@ VideoShare is a videosharing site that allowes users to share video, and interac
 
 Here, I'll provide an overview of the main files and directories in the project and how they contribute to the functionality of VideoShare:
 
-- **`media/`**: This directory is used to store user-uploaded media files, such as videos and images.
+- [**`media/`**](./media/): This directory is used to store user-uploaded media files, such as videos and images.
 
 - [**`project5/`**](./project5/): The root directory of the Django project.
 
@@ -58,52 +55,53 @@ Here, I'll provide an overview of the main files and directories in the project 
 
       - [**`uploader.js`**](./static/src/js/uploader.js): Manages video uploading functionality.
 
-    - **`scss/`**: SCSS files for styling the application using Sass.
+    - [**`scss/`**](./static/src/scss/): SCSS files for styling the application using Sass.
 
-- **`templates/`**: Contains HTML templates used by Django to render pages.
+- [**`templates/`**](./templates/): Contains HTML templates used by Django to render pages.
 
   - Various HTML templates like `history.html`, `index.html`, `layout.html`, and others, each representing different parts of the application's user interface.
 
-- **`videoshare/`**: The main Django app for VideoShare.
+- [**`videoshare/`**](./videoshare/): The main Django app for VideoShare.
 
-  - **`migrations/`**: Contains database migration files.
+  - [**`migrations/`**](./videoshare/migrations/): Contains database migration files.
     
-  - [**`MyVideos.py`**](./videoshare/MyVideos.py): Logic for managing user's own videos.
+  - [**`MyVideos.py`**](#views): Logic for managing user's own videos.
 
   - [**`admin.py`**](./videoshare/admin.py): Django admin configurations.
 
   - [**`apps.py`**](./videoshare/apps.py): Django app configuration.
 
-  - [**`fileuploader.py`**](./videoshare/fileuploader.py): Logic for handling file uploads.
+  - [**`fileuploader.py`**](#views): Logic for handling file uploads.
 
   - [**`forms.py`**](./videoshare/forms.py): Django forms for user input.
 
-  - [**`models.py`**](./videoshare/models.py): Defines the database models for VideoShare.
+  - [**`models.py`**](#models): Defines the database models for VideoShare.
 
   - [**`tests.py`**](./videoshare/tests.py): Unit tests for the app.
 
   - [**`urls.py`**](./videoshare/): URL routing for the app, mapping URLs to views.
 
-  - [**`views.py`**](./videoshare/): Contains class-based views and functions that handle user interactions.
+  - [**`views.py`**](#views): Contains class-based views and functions that handle user interactions.
 
-- **`README.md`**: Documentation providing an overview of the project, how to set it up, and its main features.
+- [**`README.md`**](./README.md): Documentation providing an overview of the project, how to set it up, and its main features.
 
 
 
 ## Installation and Usage
-
-1. [Provide step-by-step instructions for setting up and installing your CS50 Web final project, including any prerequisites and dependencies.]
-   
-2. [Explain how to run your application, including starting the Django development server, accessing the web interface, and any additional setup steps.]
+Install nodejs and python
 
 ```bash
-# Example commands for installation and running the project
-git clone [repository-url]
-cd [project-directory]
+git clone https://github.com/me50/ananito/blob/web50/projects/2020/x/capstone.git
+cd capstone
 pip install -r requirements.txt
+mkdir media media/uploads/ media/uploads/images media/uploads/videos
+
+python manage.py makemigrations
 python manage.py runserver
 ```
 
+
+## More Info
 ## Views
 - [**`views.py`**](./videoshare/views.py):
   - **`index(request)`**: Renders the index page with a list of videos.
@@ -210,3 +208,4 @@ The `UserRegistrationForm` class is a custom form that extends Django's built-in
 - `email`: The user's email address.
 - `password1`: The user's desired password.
 - `password2`: The confirmation of the user's password.
+
