@@ -188,7 +188,7 @@ def random_video(self):
 
 
 def most_viewed_videos(request):
-    videos = VideoUpload.objects.all().order_by("-views")
+    videos = VideoUpload.objects.filter(private=False).order_by("-views")
     return render(request, "most_viewed_videos.html", {"videos": videos})
 
 
